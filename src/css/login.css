@@ -46,7 +46,7 @@ body {
 }
 
 #logo{
-    width: 225px;
+    width: 300px;
     height: auto;
     margin-bottom: 20px;
     border-radius: var(--raio);
