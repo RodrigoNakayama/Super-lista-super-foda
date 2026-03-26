@@ -37,7 +37,7 @@ body {
 
 .container {
     background: var(--cor-branco);
-    padding: clamp(2rem, 5vh, 3rem);
+    padding: clamp(2rem, 5vm, 3rem);
     border-radius: var(--raio);
     box-shadow: 0 8px 24px var(--cor-sombra);
     width: 100%;
@@ -86,7 +86,7 @@ button[onclick="logout()"]:hover {
 
 #lista li {
     background-color: var(--cor-branco);
-    border: 1px solid var(--cor-texto);
+    border: 2px solid var(--cor-texto);
     border-radius: var(--raio);
     padding: 12px 16px;
     display: flex;
