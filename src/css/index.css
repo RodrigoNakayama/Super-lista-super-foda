@@ -93,6 +93,7 @@ button[onclick="logout()"]:hover {
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 6px var(--cor-texto);
+    margin-bottom: 1rem;
 }
 
 #lista button {
