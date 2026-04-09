@@ -6,7 +6,7 @@
     "display": "standalone",
     "background": "#ffffff",
     "theme_color": "7DCD85",
-    "src/icons": [
+    "icons": [
         {
             "src": "src/icons/icon 72x72.png",
             "sizes": "72x72",
