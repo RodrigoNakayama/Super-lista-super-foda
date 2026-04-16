@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Diagnóstico</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+
+        .success {
+            color: #4ec9b0;
+        }
+
+        .error {
+            color: #f48771;
+        }
+
+        .info {
+            color: #ce9178;
+        }
+
+        pre {
+            background: #252526;
+            padding: 10px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔧 Diagnóstico Supabase</h1>
+    <div id="output"></div>
+
+    <script type="module">
+        import { supabase } from './supabaseClient.js'
+
+        const output = document.getElementById('output')
+
+        function log(msg, type = 'info') {
+            const p = document.createElement('p')
+            p.innerHTML = msg
+            p.className = type
+            output.appendChild(p)
+        }
+
+        async function run() {
+            log('🚀 Diagnosticando tabela lista_compras...\n', 'info')
+
+            const { data, error } = await supabase
+                .from('lista_compras')
+                .select('*')
+                .limit(1)
+
+            if (error) {
+                log(`❌ Erro: ${error.message}`, 'error')
+                return
+            }
+
+            if (data && data.length > 0) {
+                const colunas = Object.keys(data[0])
+                log(`✅ Colunas encontradas: ${colunas.join(', ')}`, 'success')
+
+                if (!colunas.includes('completed')) {
+                    log(`\n⚠️ ATENÇÃO: Coluna 'completed' não encontrada!`, 'error')
+                    log(`Execute no SQL Editor do Supabase:`, 'info')
+                    log(`<pre>ALTER TABLE lista_compras ADD COLUMN completed BOOLEAN DEFAULT FALSE;</pre>`, 'info')
+                }
+
+                if (!colunas.includes('nome')) {
+                    log(`\n⚠️ ATENÇÃO: Coluna 'nome' não encontrada!`, 'error')
+                    log(`Execute no SQL Editor do Supabase:`, 'info')
+                    log(`<pre>ALTER TABLE lista_compras ADD COLUMN nome TEXT;</pre>`, 'info')
+                }
+
+                if (!colunas.includes('user_id')) {
+                    log(`\n⚠️ ATENÇÃO: Coluna 'user_id' não encontrada!`, 'error')
+                }
+
+                if (!colunas.includes('created_at')) {
+                    log(`\n⚠️ ATENÇÃO: Coluna 'created_at' não encontrada!`, 'error')
+                }
+            } else {
+                log('📊 Tabela está vazia', 'info')
+                log(`\nExecute no SQL Editor do Supabase para criar a tabela correta:`, 'info')
+                log(`<pre>
+CREATE TABLE lista_compras (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    nome TEXT NOT NULL,
+    completed BOOLEAN DEFAULT FALSE,
+    user_id UUID NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE lista_compras ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Todos podem ver" ON lista_compras
+    FOR SELECT TO authenticated USING (true);
+
+CREATE POLICY "Todos podem inserir" ON lista_compras
+    FOR INSERT TO authenticated WITH CHECK (true);
+
+CREATE POLICY "Todos podem atualizar" ON lista_compras
+    FOR UPDATE TO authenticated USING (true);
+
+CREATE POLICY "Todos podem deletar" ON lista_compras
+    FOR DELETE TO authenticated USING (true);
+
+GRANT ALL ON lista_compras TO authenticated;
+                </pre>`, 'info')
+            }
+        }
+
+        run()
+    </script>
+</body>
+
+</html>

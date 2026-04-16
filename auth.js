@@ -1,42 +1,59 @@
-
 import { supabase } from './supabaseClient.js'
 
-// Função para login do usuário
 window.login = async function () {
   const email = document.getElementById('email').value
   const senha = document.getElementById('senha').value
 
-  // Autentica com Supabase
-  const { error } = await supabase.auth.signInWithPassword({ email, password: senha })
+  if (!email || !senha) {
+    alert('Preencha e-mail e senha')
+    return
+  }
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha })
+
   if (error) {
     alert('Erro no login: ' + error.message)
+    console.error('Login error:', error)
   } else {
-    // Redireciona para página principal
     window.location.href = 'index.html'
   }
 }
 
-// Função para cadastrar novo usuário
 window.cadastro = async function () {
   const email = document.getElementById('email').value
   const senha = document.getElementById('senha').value
 
-  const { error } = await supabase.auth.signUp({ email, password: senha })
+  if (!email || !senha) {
+    alert('Preencha e-mail e senha')
+    return
+  }
+
+  if (senha.length < 6) {
+    alert('Senha deve ter pelo menos 6 caracteres')
+    return
+  }
+
+  const { data, error } = await supabase.auth.signUp({ email, password: senha })
+
   if (error) {
     alert('Erro no cadastro: ' + error.message)
+    console.error('Cadastro error:', error)
   } else {
-    alert('Cadastro realizado! Faça login.')
+    if (data.user?.identities?.length === 0) {
+      alert('Este e-mail já está cadastrado! Faça login.')
+    } else {
+      alert('Cadastro realizado! Faça login.')
+      document.getElementById('email').value = ''
+      document.getElementById('senha').value = ''
+    }
   }
 }
 
 document.addEventListener('keydown', function (event) {
   if (event.key === 'Enter') {
     const caminho = window.location.pathname
-    if (caminho.includes('login')) {
-      login()
-    } else if (caminho.includes('cadastro')) {
-      cadastro()
+    if (caminho.includes('login.html') || caminho === '/' || caminho === '/login') {
+      window.login()
     }
   }
 })
-    

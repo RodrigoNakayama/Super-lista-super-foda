@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+:root {
+    --cor-primaria-1: #BAC7BE;
+    --cor-primaria-2: #C2E1C2;
+    --cor-primaria-3: #7DCD85;
+    --cor-primaria-4: #80AB82;
+    --cor-bg: #778472;
+    --cor-branco: #fff;
+    --cor-preto: #1d1d1d;
+    --cor-sombra: rgba(0, 0, 0, 0.15);
+    --cor-texto: #333;
+    --fonte: "Open Sans", sans-serif;
+    --raio: 12px;
+    --transition: 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--fonte);
+    background: linear-gradient(90deg, #BAC7BE 0%, #C2E1C2 50%, #7DCD85 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    background: var(--cor-branco);
+    padding: clamp(2rem, 5vw, 2.5rem);
+    border-radius: var(--raio);
+    box-shadow: 0 8px 24px var(--cor-sombra);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+#logo {
+    width: 100px;
+    height: auto;
+    margin-bottom: 1rem;
+    border-radius: var(--raio);
+}
+
+.titulo {
+    font-size: 1.8rem;
+    color: var(--cor-texto);
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+.subtitulo {
+    color: var(--cor-texto);
+    opacity: 0.7;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    margin: 8px 0;
+    border: 2px solid var(--cor-primaria-2);
+    border-radius: var(--raio);
+    font-size: 1rem;
+    font-family: var(--fonte);
+    transition: var(--transition);
+}
+
+input:focus {
+    border-color: var(--cor-primaria-3);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(125, 205, 133, 0.2);
+}
+
+.botoes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+button {
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--raio);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: var(--fonte);
+}
+
+button:first-child {
+    background-color: var(--cor-primaria-4);
+    color: var(--cor-branco);
+}
+
+button:first-child:hover {
+    background-color: var(--cor-primaria-3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.secundario {
+    background-color: transparent;
+    color: var(--cor-primaria-4);
+    border: 2px solid var(--cor-primaria-2);
+}
+
+.secundario:hover {
+    background-color: var(--cor-primaria-1);
+    border-color: var(--cor-primaria-3);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 1.5rem;
+    }
+
+    .titulo {
+        font-size: 1.5rem;
+    }
+
+    input,
+    button {
+        font-size: 0.9rem;
+    }
+}
