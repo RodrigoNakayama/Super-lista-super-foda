@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -11,23 +10,34 @@
     <meta name="theme-color" content="#80AB82">
     <link rel="stylesheet" href="src/css/login.css">
 </head>
-
 <body>
     <div class="container">
+        <div class="header">
+            <button id="imageBtn" class="image-btn" aria-label="Mostrar imagem">🖼️</button>
+            <button id="darkModeBtn" class="dark-mode-btn" aria-label="Modo escuro">🌙</button>
+        </div>
         <img id="logo" src="src/icons/icon-512x512.png" alt="lIsTa 26">
         <h2 class="titulo">lIsTa 26</h2>
         <p class="subtitulo">Lista de compras compartilhada</p>
-
+        
         <input type="email" id="email" placeholder="Seu e-mail">
         <input type="password" id="senha" placeholder="Sua senha">
-
+        
         <div class="botoes">
             <button onclick="login()">Entrar</button>
             <button onclick="cadastro()" class="secundario">Criar conta</button>
         </div>
     </div>
 
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img id="modalImage" src="" alt="Imagem">
+        </div>
+    </div>
+
     <script type="module" src="auth.js"></script>
+    <script src="theme.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -41,7 +51,5 @@
             });
         }
     </script>
-    
 </body>
-
 </html>
