@@ -190,19 +190,3 @@ button[onclick="adicionarItem()"]:active {
         font-size: 0.75rem;
     }
 }
-.theme-toggle {
-    background: var(--cor-primaria-2);
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 8px 12px;
-    border-radius: 50px;
-    transition: all 0.3s ease;
-    width: auto;
-    margin: 0;
-}
-
-.theme-toggle:hover {
-    background: var(--cor-primaria-3);
-    transform: scale(1.05);
-}

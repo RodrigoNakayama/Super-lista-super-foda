@@ -134,20 +134,3 @@ button:first-child:hover {
         font-size: 0.9rem;
     }
 }
-.theme-toggle {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: var(--cor-primaria-2);
-    border: none;
-    font-size: 1.3rem;
-    cursor: pointer;
-    padding: 6px 10px;
-    border-radius: 50px;
-    transition: all 0.3s ease;
-}
-
-.theme-toggle:hover {
-    background: var(--cor-primaria-3);
-    transform: scale(1.05);
-}
