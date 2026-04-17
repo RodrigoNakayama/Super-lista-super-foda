@@ -1,12 +1,13 @@
 const imageList = [
-    'https://images.unsplash.com/photo-1542838132-92c53300491e?w=300&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1556906781-9a412961c28c?w=300&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=300&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=300&h=300&fit=crop',
-    'src/'
+    'src/image/does he know.jpg',
+    'src/image/bait.jpg',
+    'src/image/broly.jpg',
+    'src/image/mrbreast.jpg',
+    'src/image/tboi.jpg',
+    'src/image/the goat.jpg',
+    'src/image/truth.jpg',
+    'src/image/asdfghjkl.jpg',
+    'src/image/vegeta.jpg'
 ]
 
 function initTheme() {
