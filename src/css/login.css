@@ -42,6 +42,8 @@ body {
     min-height: 100vh;
     padding: 20px;
     transition: background 0.3s ease;
+    position: relative;
+    overflow-x: hidden;
 }
 
 .container {
@@ -184,11 +186,8 @@ button:first-child:hover {
 
 .floating-image {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
-    height: 300px;
+    width: 250px;
+    height: 250px;
     z-index: 1000;
     opacity: 0;
     transition: opacity 0.5s ease;
@@ -251,7 +250,7 @@ button:first-child:hover {
     }
     
     .floating-image {
-        width: 250px;
-        height: 250px;
+        width: 200px;
+        height: 200px;
     }
 }
