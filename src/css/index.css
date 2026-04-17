@@ -53,6 +53,8 @@ body {
     max-width: 550px;
     text-align: center;
     transition: background 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    z-index: 1;
 }
 
 .header {
@@ -223,46 +225,59 @@ button[onclick="adicionarItem()"]:active {
     transform: translateY(0);
 }
 
-.modal {
-    display: none;
+.floating-image {
     position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
     z-index: 1000;
-    left: 0;
-    top: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.floating-image.show {
+    opacity: 0.85;
+    pointer-events: auto;
+}
+
+.floating-image img {
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 3px solid var(--cor-primaria-3);
 }
 
-.modal-content {
-    position: relative;
-    background-color: var(--cor-branco);
-    margin: 10% auto;
-    padding: 20px;
-    width: 80%;
-    max-width: 500px;
-    border-radius: var(--raio);
-    text-align: center;
-}
-
-.modal-content img {
-    max-width: 100%;
-    height: auto;
-    border-radius: var(--raio);
-}
-
-.close {
+.close-image-btn {
     position: absolute;
-    top: 10px;
-    right: 20px;
-    color: var(--cor-texto);
-    font-size: 28px;
-    font-weight: bold;
+    top: -10px;
+    right: -10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    font-size: 16px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    pointer-events: auto;
 }
 
-.close:hover {
-    color: var(--cor-primaria-3);
+.close-image-btn:hover {
+    background: #ff4757;
+    transform: scale(1.1);
+}
+
+.floating-image.hidden {
+    display: none;
 }
 
 @media (max-width: 480px) {
@@ -283,8 +298,8 @@ button[onclick="adicionarItem()"]:active {
         font-size: 0.75rem;
     }
     
-    .modal-content {
-        width: 90%;
-        margin: 30% auto;
+    .floating-image {
+        width: 250px;
+        height: 250px;
     }
 }

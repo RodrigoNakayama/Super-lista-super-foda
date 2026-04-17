@@ -13,7 +13,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <button id="imageBtn" class="image-btn" aria-label="Mostrar imagem">🖼️</button>
+            <button id="imageBtn" class="image-btn" aria-label="Mostrar imagem aleatória">🎲</button>
             <button id="darkModeBtn" class="dark-mode-btn" aria-label="Modo escuro">🌙</button>
         </div>
         <img id="logo" src="src/icons/icon-512x512.png" alt="lIsTa 26">
@@ -29,11 +29,9 @@
         </div>
     </div>
 
-    <div id="imageModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <img id="modalImage" src="" alt="Imagem">
-        </div>
+    <div id="floatingImage" class="floating-image hidden">
+        <img id="randomImage" src="" alt="Imagem aleatória">
+        <button id="closeImageBtn" class="close-image-btn">✖</button>
     </div>
 
     <script type="module" src="auth.js"></script>
