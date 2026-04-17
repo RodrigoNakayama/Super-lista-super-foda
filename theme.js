@@ -6,7 +6,7 @@ const imageList = [
     'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=300&fit=crop',
     'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=300&fit=crop',
     'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=300&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=300&h=300&fit=crop'
+    'src/'
 ]
 
 function initTheme() {
