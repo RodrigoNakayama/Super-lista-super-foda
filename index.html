@@ -15,6 +15,18 @@
             <h2 class="titulo">Lista super foda</h2>
             <button id="darkModeBtn" class="dark-mode-btn" aria-label="Modo escuro">🌙</button>
         </div>
+        
+        <div class="slots-container">
+            <h3 class="slots-title">🎰 JACKPOT SLOTS 🎰</h3>
+            <div class="slots-machine">
+                <div class="slot-reel" id="slot1">🍒</div>
+                <div class="slot-reel" id="slot2">🍒</div>
+                <div class="slot-reel" id="slot3">🍒</div>
+            </div>
+            <button id="spinBtn" class="spin-btn">GIRAR 🎲</button>
+            <div id="slotMessage" class="slot-message"></div>
+        </div>
+        
         <button onclick="logout()">Sair</button>
         <ul id="lista"></ul>
         <input type="text" id="item" placeholder="Novo Item">
@@ -26,8 +38,17 @@
         <button id="closeImageBtn" class="close-image-btn">✖</button>
     </div>
 
+    <div id="jackpotModal" class="jackpot-modal hidden">
+        <div class="jackpot-content">
+            <div class="jackpot-animation">💀 JACKPOT! 💀</div>
+            <p>Você será desconectado em <span id="countdown">3</span> segundos...</p>
+            <div class="jackpot-skull">☠️</div>
+        </div>
+    </div>
+
     <script type="module" src="app.js"></script>
     <script src="theme.js"></script>
+    <script src="slots.js"></script>
     
     <script>
         if ('serviceWorker' in navigator) {

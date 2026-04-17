@@ -108,6 +108,159 @@ body {
     transform: scale(1.05);
 }
 
+.slots-container {
+    background: var(--cor-primaria-2);
+    border-radius: var(--raio);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 2px solid var(--cor-primaria-3);
+}
+
+.slots-title {
+    color: var(--cor-texto);
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.slots-machine {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 1rem;
+}
+
+.slot-reel {
+    width: 80px;
+    height: 80px;
+    background: var(--cor-branco);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1), 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.1s ease;
+    border: 2px solid var(--cor-primaria-4);
+}
+
+.spin-btn {
+    background: linear-gradient(135deg, var(--cor-primaria-4), var(--cor-primaria-3));
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: auto;
+    margin: 0 auto;
+    display: inline-block;
+}
+
+.spin-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px var(--cor-sombra);
+}
+
+.spin-btn:disabled {
+    opacity: 0.6;
+    transform: none;
+    cursor: not-allowed;
+}
+
+.slot-message {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-height: 40px;
+}
+
+.slot-message.jackpot {
+    color: #ff6b6b;
+    animation: pulse 0.5s infinite;
+}
+
+.slot-message.almost {
+    color: #ffa502;
+}
+
+.slot-message.lose {
+    color: var(--cor-texto);
+    opacity: 0.7;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.jackpot-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.jackpot-modal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.jackpot-modal.hidden {
+    display: none;
+}
+
+.jackpot-content {
+    text-align: center;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    padding: 2rem;
+    border-radius: 30px;
+    border: 3px solid #ff6b6b;
+    animation: shake 0.5s ease;
+}
+
+.jackpot-animation {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ff6b6b;
+    text-shadow: 0 0 10px #ff6b6b;
+    animation: blink 1s infinite;
+    margin-bottom: 1rem;
+}
+
+.jackpot-skull {
+    font-size: 4rem;
+    margin-top: 1rem;
+    animation: spin 1s infinite;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 button[onclick="logout()"] {
     margin-bottom: 1.5rem;
     background-color: var(--cor-primaria-4);
@@ -282,6 +435,20 @@ button[onclick="adicionarItem()"]:active {
 @media (max-width: 480px) {
     .container {
         padding: 1rem;
+    }
+    
+    .slot-reel {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+    
+    .jackpot-animation {
+        font-size: 1.5rem;
+    }
+    
+    .jackpot-skull {
+        font-size: 3rem;
     }
     
     #lista li {

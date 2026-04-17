@@ -16,6 +16,18 @@
             <button id="imageBtn" class="image-btn" aria-label="Mostrar imagem aleatória">🎲</button>
             <button id="darkModeBtn" class="dark-mode-btn" aria-label="Modo escuro">🌙</button>
         </div>
+        
+        <div class="slots-container">
+            <h3 class="slots-title">🎰 JACKPOT SLOTS 🎰</h3>
+            <div class="slots-machine">
+                <div class="slot-reel" id="slot1">🍒</div>
+                <div class="slot-reel" id="slot2">🍒</div>
+                <div class="slot-reel" id="slot3">🍒</div>
+            </div>
+            <button id="spinBtn" class="spin-btn">GIRAR 🎲</button>
+            <div id="slotMessage" class="slot-message"></div>
+        </div>
+        
         <img id="logo" src="src/icons/icon-512x512.png" alt="lIsTa 26">
         <h2 class="titulo">lIsTa 26</h2>
         <p class="subtitulo">Lista de compras compartilhada</p>
@@ -34,8 +46,17 @@
         <button id="closeImageBtn" class="close-image-btn">✖</button>
     </div>
 
+    <div id="jackpotModal" class="jackpot-modal hidden">
+        <div class="jackpot-content">
+            <div class="jackpot-animation">💀 JACKPOT! 💀</div>
+            <p>Você será desconectado em <span id="countdown">3</span> segundos...</p>
+            <div class="jackpot-skull">☠️</div>
+        </div>
+    </div>
+
     <script type="module" src="auth.js"></script>
     <script src="theme.js"></script>
+    <script src="slots.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
