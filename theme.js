@@ -8,7 +8,9 @@ const imageList = [
     'src/image/truth.jpg',
     'src/image/asdfghjkl.jpg',
     'src/image/vegeta.jpg',
-    'src/image/lowtiergod'
+    'src/image/lowtiergod.jpg',
+    'src/image/rato.jpg',
+    'src/image/balatrito.jpg'
 ]
 
 function initTheme() {
