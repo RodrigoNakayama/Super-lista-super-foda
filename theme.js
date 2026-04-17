@@ -7,7 +7,8 @@ const imageList = [
     'src/image/the goat.jpg',
     'src/image/truth.jpg',
     'src/image/asdfghjkl.jpg',
-    'src/image/vegeta.jpg'
+    'src/image/vegeta.jpg',
+    'src/image/lowtiergod'
 ]
 
 function initTheme() {
