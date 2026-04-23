@@ -50,14 +50,14 @@ function showPointsMessage(message, type) {
                 pointsMessage.className = 'points-message'
             }
         }, 2000)
-    }
+    }7️
 }
 
 function checkWinPoints(result1, result2, result3) {
     const combination = `${result1}${result2}${result3}`
     const specialCombination = `${result1}${result2}${result3}`
     
-    if (result1 === result2 && result2 === result3) {
+    if (result1 === 7️⃣ && result2 === 7️⃣ && result3 === 7️⃣) {
         const points = pointValues[specialCombination] || 5
         addPoints(points)
         showSlotMessage(`🎉 JACKPOT! +${points} pontos! 🎉`, 'jackpot')
