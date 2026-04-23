@@ -57,38 +57,59 @@ function showPointsMessage(message, type) {
 }
 
 function launchConfetti() {
-    for (let i = 0; i < 40; i++) {
+    const centerX = window.innerWidth / 2
+    const centerY = window.innerHeight - 50
+    
+    for (let i = 0; i < 60; i++) {
         setTimeout(() => {
             const confetto = document.createElement('img')
             const randomImage = confettiImages[Math.floor(Math.random() * confettiImages.length)]
-            const randomX = Math.random() * window.innerWidth
-            const randomY = -100
+            
+            const angle = (Math.random() * Math.PI * 2)
+            const velocity = 300 + Math.random() * 400
+            const timeToLive = 2 + Math.random() * 1.5
+            
+            const randomSize = 25 + Math.random() * 45
             const randomRotation = Math.random() * 360
-            const randomSize = 30 + Math.random() * 40
             
             confetto.src = randomImage
             confetto.style.position = 'fixed'
-            confetto.style.left = randomX + 'px'
-            confetto.style.top = randomY + 'px'
+            confetto.style.left = centerX + 'px'
+            confetto.style.top = centerY + 'px'
             confetto.style.width = randomSize + 'px'
             confetto.style.height = randomSize + 'px'
             confetto.style.zIndex = '1500'
             confetto.style.pointerEvents = 'none'
-            confetto.style.opacity = '0.9'
-            confetto.style.transition = 'all 3s ease-out'
+            confetto.style.opacity = '1'
             confetto.style.transform = `rotate(${randomRotation}deg)`
             
             document.body.appendChild(confetto)
             
-            setTimeout(() => {
-                confetto.style.transform = `translateY(${window.innerHeight + 200}px) rotate(${randomRotation + 360}deg)`
-                confetto.style.opacity = '0'
-            }, 10)
+            const startTime = performance.now()
             
-            setTimeout(() => {
-                confetto.remove()
-            }, 3000)
-        }, i * 50)
+            function animateConfetto(now) {
+                const elapsed = (now - startTime) / 1000
+                
+                if (elapsed >= timeToLive) {
+                    confetto.remove()
+                    return
+                }
+                
+                const progress = elapsed / timeToLive
+                const distance = velocity * elapsed
+                const currentX = centerX + Math.cos(angle) * distance
+                const currentY = centerY + Math.sin(angle) * distance - (9.8 * elapsed * elapsed * 50)
+                
+                confetto.style.left = currentX + 'px'
+                confetto.style.top = currentY + 'px'
+                confetto.style.opacity = 1 - progress
+                confetto.style.transform = `rotate(${randomRotation + (elapsed * 360)}deg)`
+                
+                requestAnimationFrame(animateConfetto)
+            }
+            
+            requestAnimationFrame(animateConfetto)
+        }, i * 30)
     }
 }
 
