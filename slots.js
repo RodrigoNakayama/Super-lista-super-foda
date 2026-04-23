@@ -16,7 +16,12 @@ const pointValues = {
 }
 
 const confettiImages = [
-    'src/image/yuri.jpg'
+    'https://cdn-icons-png.flaticon.com/512/1828/1828884.png',
+    'https://cdn-icons-png.flaticon.com/512/1828/1828891.png',
+    'https://cdn-icons-png.flaticon.com/512/1828/1828901.png',
+    'https://cdn-icons-png.flaticon.com/512/1828/1828914.png',
+    'https://cdn-icons-png.flaticon.com/512/1828/1828926.png',
+    'https://cdn-icons-png.flaticon.com/512/1828/1828935.png'
 ]
 
 function getRandomSymbol() {
@@ -56,11 +61,15 @@ function showPointsMessage(message, type) {
     }
 }
 
-function launchConfetti() {
+function launchConfetti(points) {
+    const baseConfetti = 30
+    const bonusConfetti = points * 2
+    const totalConfetti = Math.min(baseConfetti + bonusConfetti, 200)
+    
     const centerX = window.innerWidth / 2
     const centerY = window.innerHeight - 50
     
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < totalConfetti; i++) {
         setTimeout(() => {
             const confetto = document.createElement('img')
             const randomImage = confettiImages[Math.floor(Math.random() * confettiImages.length)]
@@ -69,7 +78,8 @@ function launchConfetti() {
             const velocity = 300 + Math.random() * 400
             const timeToLive = 2 + Math.random() * 1.5
             
-            const randomSize = 25 + Math.random() * 45
+            const sizeBonus = points / 10
+            const randomSize = Math.min(25 + sizeBonus + Math.random() * 45, 80)
             const randomRotation = Math.random() * 360
             
             confetto.src = randomImage
@@ -109,8 +119,10 @@ function launchConfetti() {
             }
             
             requestAnimationFrame(animateConfetto)
-        }, i * 30)
+        }, i * 20)
     }
+    
+    console.log(`Canhão de confete: ${totalConfetti} confetes para ${points} pontos!`)
 }
 
 function checkWinPoints(result1, result2, result3) {
@@ -126,7 +138,7 @@ function checkWinPoints(result1, result2, result3) {
             triggerJackpotLogout()
         } else {
             showSlotMessage(`🎉 JACKPOT! +${points} pontos! 🎉`, 'jackpot')
-            launchConfetti()
+            launchConfetti(points)
         }
         return points
     } else if (result1 === result2 || result2 === result3 || result1 === result3) {
@@ -194,7 +206,7 @@ async function forceJackpot() {
         triggerJackpotLogout()
     } else {
         showSlotMessage(`🔓 CÓDIGO SECRETO! +${points} pontos! 🔓`, 'jackpot')
-        launchConfetti()
+        launchConfetti(points)
     }
 }
 
