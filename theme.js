@@ -11,7 +11,8 @@ const imageList = [
     'src/image/lowtiergod.jpg',
     'src/image/rato.jpg',
     'src/image/balatrito.jpg',
-    'src/image/meu pai e seu amigo.jpg'
+    'src/image/meu pai e seu amigo.jpg',
+    'src/image/yuri.jpg'
 ]
 
 function initTheme() {
