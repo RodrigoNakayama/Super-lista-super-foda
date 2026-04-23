@@ -13,9 +13,9 @@ const imageList = [
     'src/image/balatrito.jpg',
     'src/image/meu pai e seu amigo.jpg',
     'src/image/yuri.jpg',
-    'src/image/sas.jpg'
-    'src/image/balls.jpg'
-    'src/image/bobs.jpg'
+    'src/image/sas.jpg',
+    'src/image/balls.jpg',
+    'src/image/bobs.jpg',
     'src/image/cokc.jpg'
 ]
 
