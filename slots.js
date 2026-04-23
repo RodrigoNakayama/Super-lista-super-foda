@@ -16,12 +16,8 @@ const pointValues = {
 }
 
 const confettiImages = [
-    'https://cdn-icons-png.flaticon.com/512/1828/1828884.png',
-    'https://cdn-icons-png.flaticon.com/512/1828/1828891.png',
-    'https://cdn-icons-png.flaticon.com/512/1828/1828901.png',
-    'https://cdn-icons-png.flaticon.com/512/1828/1828914.png',
-    'https://cdn-icons-png.flaticon.com/512/1828/1828926.png',
-    'https://cdn-icons-png.flaticon.com/512/1828/1828935.png'
+    'src/image/yuri.jpg',
+    'src/image/yuriv2.jpg'
 ]
 
 function getRandomSymbol() {
