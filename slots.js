@@ -1,4 +1,4 @@
-const symbols = ['🍒','7️⃣', '🔔']
+const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '💎', '7️⃣', '🔔']
 let isSpinning = false
 let userPoints = 100
 
