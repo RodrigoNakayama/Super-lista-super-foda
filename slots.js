@@ -1,8 +1,76 @@
 const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '💎', '7️⃣', '🔔']
 let isSpinning = false
+let userPoints = 100
+
+const pointValues = {
+    '🍒🍒🍒': 10,
+    '🍋🍋🍋': 15,
+    '🍊🍊🍊': 20,
+    '🍉🍉🍉': 25,
+    '⭐⭐⭐': 50,
+    '💎💎💎': 75,
+    '7️⃣7️⃣7️⃣': 100,
+    '🔔🔔🔔': 30
+}
 
 function getRandomSymbol() {
     return symbols[Math.floor(Math.random() * symbols.length)]
+}
+
+function updatePointsDisplay() {
+    const pointsDisplay = document.getElementById('pointsDisplay')
+    if (pointsDisplay) {
+        pointsDisplay.textContent = userPoints
+    }
+}
+
+function addPoints(amount) {
+    userPoints += amount
+    updatePointsDisplay()
+    showPointsMessage(`+${amount} pontos!`, 'gain')
+}
+
+function removePoints(amount) {
+    if (userPoints >= amount) {
+        userPoints -= amount
+        updatePointsDisplay()
+        return true
+    }
+    return false
+}
+
+function showPointsMessage(message, type) {
+    const pointsMessage = document.getElementById('pointsMessage')
+    if (pointsMessage) {
+        pointsMessage.textContent = message
+        pointsMessage.className = 'points-message ' + type
+        setTimeout(() => {
+            if (pointsMessage.textContent === message) {
+                pointsMessage.textContent = ''
+                pointsMessage.className = 'points-message'
+            }
+        }, 2000)
+    }
+}
+
+function checkWinPoints(result1, result2, result3) {
+    const combination = `${result1}${result2}${result3}`
+    const specialCombination = `${result1}${result2}${result3}`
+    
+    if (result1 === result2 && result2 === result3) {
+        const points = pointValues[specialCombination] || 5
+        addPoints(points)
+        showSlotMessage(`🎉 JACKPOT! +${points} pontos! 🎉`, 'jackpot')
+        return points
+    } else if (result1 === result2 || result2 === result3 || result1 === result3) {
+        addPoints(3)
+        showSlotMessage(`Quase lá! +3 pontos`, 'almost')
+        return 3
+    } else {
+        addPoints(1)
+        showSlotMessage(`Tente novamente! +1 ponto`, 'lose')
+        return 1
+    }
 }
 
 function animateReel(reelElement, targetSymbol, duration = 500) {
@@ -58,14 +126,7 @@ async function spinSlots() {
     spinBtn.textContent = 'GIRAR 🎲'
     isSpinning = false
     
-    if (result1 === result2 && result2 === result3) {
-        showSlotMessage(`🎉 JACKPOT! ${result1} ${result2} ${result3} 🎉`, 'jackpot')
-        triggerJackpot()
-    } else if (result1 === result2 || result2 === result3 || result1 === result3) {
-        showSlotMessage(`Quase lá! ${result1} ${result2} ${result3}`, 'almost')
-    } else {
-        showSlotMessage(`Tente novamente! ${result1} ${result2} ${result3}`, 'lose')
-    }
+    checkWinPoints(result1, result2, result3)
 }
 
 function showSlotMessage(message, type) {
@@ -107,9 +168,15 @@ function closeJackpotModal() {
     jackpotModal.classList.add('hidden')
 }
 
+window.addPoints = addPoints
+window.removePoints = removePoints
+window.updatePointsDisplay = updatePointsDisplay
+window.getUserPoints = () => userPoints
+
 document.addEventListener('DOMContentLoaded', () => {
     const spinBtn = document.getElementById('spinBtn')
     if (spinBtn) {
         spinBtn.addEventListener('click', spinSlots)
     }
+    updatePointsDisplay()
 })

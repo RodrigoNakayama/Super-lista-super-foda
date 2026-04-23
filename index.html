@@ -16,15 +16,30 @@
             <button id="darkModeBtn" class="dark-mode-btn" aria-label="Modo escuro">🌙</button>
         </div>
         
+        <div class="points-system">
+            <div class="points-card">
+                <span class="points-icon">⭐</span>
+                <span class="points-label">Seus Pontos:</span>
+                <span id="pointsDisplay" class="points-value">100</span>
+            </div>
+            <div id="pointsMessage" class="points-message"></div>
+        </div>
+        
         <div class="slots-container">
-            <h3 class="slots-title">🎰 SALE BALATRITO 🎰</h3>
+            <h3 class="slots-title">🎰 GIRE PARA GANHAR PONTOS 🎰</h3>
             <div class="slots-machine">
                 <div class="slot-reel" id="slot1">🍒</div>
                 <div class="slot-reel" id="slot2">🍒</div>
                 <div class="slot-reel" id="slot3">🍒</div>
             </div>
-            <button id="spinBtn" class="spin-btn">GIRAR 🎲</button>
+            <button id="spinBtn" class="spin-btn">GIRAR 🎲 (GANHE PONTOS)</button>
             <div id="slotMessage" class="slot-message"></div>
+        </div>
+        
+        <div class="info-box">
+            <p>💡 Adicionar item: <strong>-10 pontos</strong></p>
+            <p>🗑️ Remover item: <strong>-5 pontos</strong></p>
+            <p>🎰 Gire os slots para ganhar pontos!</p>
         </div>
         
         <button onclick="logout()">Sair</button>
@@ -40,7 +55,7 @@
     <div id="jackpotModal" class="jackpot-modal hidden">
         <div class="jackpot-content">
             <div class="jackpot-animation">💀 JACKPOT! 💀</div>
-            <p>YOU SHOULD KILL YOURSELF <span id="countdown">3</span> segundos...</p>
+            <p>YOU SHOULD KILL YOURSELF NOW<span id="countdown">3</span> segundos...</p>
             <div class="jackpot-skull">☠️</div>
         </div>
     </div>
