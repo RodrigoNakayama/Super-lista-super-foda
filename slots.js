@@ -33,12 +33,9 @@ function addPoints(amount) {
 }
 
 function removePoints(amount) {
-    if (userPoints >= amount) {
-        userPoints -= amount
-        updatePointsDisplay()
-        return true
-    }
-    return false
+    userPoints -= amount
+    updatePointsDisplay()
+    showPointsMessage(`-${amount} ponto${amount > 1 ? 's' : ''}!`, 'lose')
 }
 
 function showPointsMessage(message, type) {
@@ -62,16 +59,22 @@ function checkWinPoints(result1, result2, result3) {
     if (result1 === result2 && result2 === result3) {
         const points = pointValues[specialCombination] || 5
         addPoints(points)
-        showSlotMessage(`🎉 JACKPOT! +${points} pontos! 🎉`, 'jackpot')
+        
+        if (result1 === '7️⃣' && result2 === '7️⃣' && result3 === '7️⃣') {
+            showSlotMessage(`💀 JACKPOT MORTAL! 7️⃣7️⃣7️⃣ - Você será desconectado! 💀`, 'jackpot')
+            triggerJackpotLogout()
+        } else {
+            showSlotMessage(`🎉 JACKPOT! +${points} pontos! 🎉`, 'jackpot')
+        }
         return points
     } else if (result1 === result2 || result2 === result3 || result1 === result3) {
         addPoints(3)
         showSlotMessage(`Quase lá! +3 pontos`, 'almost')
         return 3
     } else {
-        addPoints(1)
-        showSlotMessage(`Tente novamente! +1 ponto`, 'lose')
-        return 1
+        removePoints(1)
+        showSlotMessage(`Nenhuma combinação! -1 ponto`, 'lose')
+        return -1
     }
 }
 
@@ -107,7 +110,8 @@ async function forceJackpot() {
     spinBtn.disabled = true
     spinBtn.textContent = 'JACKPOT SECRETO!'
     
-    const jackpotSymbol = symbols[Math.floor(Math.random() * symbols.length)]
+    const jackpotSymbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '💎', '🔔']
+    const jackpotSymbol = jackpotSymbols[Math.floor(Math.random() * jackpotSymbols.length)]
     
     const reel1 = document.getElementById('slot1')
     const reel2 = document.getElementById('slot2')
@@ -200,6 +204,27 @@ function showSecretMessage() {
     }, 2000)
 }
 
+function triggerJackpotLogout() {
+    const jackpotModal = document.getElementById('jackpotModal')
+    let countdown = 3
+    const countdownSpan = document.getElementById('countdown')
+    
+    jackpotModal.classList.remove('hidden')
+    jackpotModal.classList.add('show')
+    
+    const countdownInterval = setInterval(() => {
+        countdown--
+        if (countdownSpan) {
+            countdownSpan.textContent = countdown
+        }
+        
+        if (countdown <= 0) {
+            clearInterval(countdownInterval)
+            window.logout()
+        }
+    }, 1000)
+}
+
 function checkSecretCode(event) {
     const key = event.key.toUpperCase()
     const expectedKey = targetCode[secretCode.length]
@@ -220,27 +245,6 @@ function checkSecretCode(event) {
             }
         }
     }
-}
-
-function triggerJackpot() {
-    const jackpotModal = document.getElementById('jackpotModal')
-    let countdown = 3
-    const countdownSpan = document.getElementById('countdown')
-    
-    jackpotModal.classList.remove('hidden')
-    jackpotModal.classList.add('show')
-    
-    const countdownInterval = setInterval(() => {
-        countdown--
-        if (countdownSpan) {
-            countdownSpan.textContent = countdown
-        }
-        
-        if (countdown <= 0) {
-            clearInterval(countdownInterval)
-            window.logout()
-        }
-    }, 1000)
 }
 
 function closeJackpotModal() {
