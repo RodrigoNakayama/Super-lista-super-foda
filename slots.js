@@ -110,8 +110,7 @@ async function forceJackpot() {
     spinBtn.disabled = true
     spinBtn.textContent = 'JACKPOT SECRETO!'
     
-    const jackpotSymbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '💎', '🔔']
-    const jackpotSymbol = jackpotSymbols[Math.floor(Math.random() * jackpotSymbols.length)]
+    const jackpotSymbol = getRandomSymbol()
     
     const reel1 = document.getElementById('slot1')
     const reel2 = document.getElementById('slot2')
@@ -127,7 +126,13 @@ async function forceJackpot() {
     
     const points = pointValues[`${jackpotSymbol}${jackpotSymbol}${jackpotSymbol}`] || 50
     addPoints(points)
-    showSlotMessage(`🔓 CÓDIGO SECRETO! +${points} pontos! 🔓`, 'jackpot')
+    
+    if (jackpotSymbol === '7️⃣') {
+        showSlotMessage(`🔓 CÓDIGO SECRETO! 7️⃣7️⃣7️⃣ - Você será desconectado! 🔓`, 'jackpot')
+        triggerJackpotLogout()
+    } else {
+        showSlotMessage(`🔓 CÓDIGO SECRETO! +${points} pontos! 🔓`, 'jackpot')
+    }
 }
 
 async function spinSlots() {
