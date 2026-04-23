@@ -128,8 +128,6 @@ async function forceJackpot() {
     const points = pointValues[`${jackpotSymbol}${jackpotSymbol}${jackpotSymbol}`] || 50
     addPoints(points)
     showSlotMessage(`🔓 CÓDIGO SECRETO! +${points} pontos! 🔓`, 'jackpot')
-    
-    showSecretMessage()
 }
 
 async function spinSlots() {
@@ -175,33 +173,6 @@ function showSlotMessage(message, type) {
             slotMessage.className = 'slot-message'
         }
     }, 3000)
-}
-
-function showSecretMessage() {
-    const secretDiv = document.createElement('div')
-    secretDiv.textContent = '🔓 CÓDIGO SECRETO ATIVADO! I L O V E Y U R I 🔓'
-    secretDiv.style.position = 'fixed'
-    secretDiv.style.top = '50%'
-    secretDiv.style.left = '50%'
-    secretDiv.style.transform = 'translate(-50%, -50%)'
-    secretDiv.style.background = 'linear-gradient(135deg, #ff6b6b, #ffa502)'
-    secretDiv.style.color = 'white'
-    secretDiv.style.padding = '20px 40px'
-    secretDiv.style.borderRadius = '50px'
-    secretDiv.style.fontSize = '1.5rem'
-    secretDiv.style.fontWeight = 'bold'
-    secretDiv.style.zIndex = '3000'
-    secretDiv.style.boxShadow = '0 0 50px rgba(255,107,107,0.8)'
-    secretDiv.style.animation = 'pulse 0.5s infinite'
-    secretDiv.style.textAlign = 'center'
-    
-    document.body.appendChild(secretDiv)
-    
-    setTimeout(() => {
-        secretDiv.style.opacity = '0'
-        secretDiv.style.transition = 'opacity 0.5s'
-        setTimeout(() => secretDiv.remove(), 500)
-    }, 2000)
 }
 
 function triggerJackpotLogout() {
