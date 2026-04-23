@@ -1,6 +1,8 @@
 const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '💎', '7️⃣', '🔔']
 let isSpinning = false
 let userPoints = 100
+let secretCode = ''
+const targetCode = 'ILOVEYURI'
 
 const pointValues = {
     '🍒🍒🍒': 10,
@@ -50,14 +52,14 @@ function showPointsMessage(message, type) {
                 pointsMessage.className = 'points-message'
             }
         }, 2000)
-    }7️
+    }
 }
 
 function checkWinPoints(result1, result2, result3) {
     const combination = `${result1}${result2}${result3}`
     const specialCombination = `${result1}${result2}${result3}`
     
-    if (result1 === 7️⃣ && result2 === 7️⃣ && result3 === 7️⃣) {
+    if (result1 === result2 && result2 === result3) {
         const points = pointValues[specialCombination] || 5
         addPoints(points)
         showSlotMessage(`🎉 JACKPOT! +${points} pontos! 🎉`, 'jackpot')
@@ -94,6 +96,36 @@ function animateReel(reelElement, targetSymbol, duration = 500) {
             }
         }, 80)
     })
+}
+
+async function forceJackpot() {
+    if (isSpinning) return
+    
+    isSpinning = true
+    const spinBtn = document.getElementById('spinBtn')
+    
+    spinBtn.disabled = true
+    spinBtn.textContent = 'JACKPOT SECRETO!'
+    
+    const jackpotSymbol = symbols[Math.floor(Math.random() * symbols.length)]
+    
+    const reel1 = document.getElementById('slot1')
+    const reel2 = document.getElementById('slot2')
+    const reel3 = document.getElementById('slot3')
+    
+    await animateReel(reel1, jackpotSymbol, 300)
+    await animateReel(reel2, jackpotSymbol, 400)
+    await animateReel(reel3, jackpotSymbol, 500)
+    
+    spinBtn.disabled = false
+    spinBtn.textContent = 'GIRAR 🎲'
+    isSpinning = false
+    
+    const points = pointValues[`${jackpotSymbol}${jackpotSymbol}${jackpotSymbol}`] || 50
+    addPoints(points)
+    showSlotMessage(`🔓 CÓDIGO SECRETO! +${points} pontos! 🔓`, 'jackpot')
+    
+    showSecretMessage()
 }
 
 async function spinSlots() {
@@ -141,6 +173,55 @@ function showSlotMessage(message, type) {
     }, 3000)
 }
 
+function showSecretMessage() {
+    const secretDiv = document.createElement('div')
+    secretDiv.textContent = '🔓 CÓDIGO SECRETO ATIVADO! I L O V E Y U R I 🔓'
+    secretDiv.style.position = 'fixed'
+    secretDiv.style.top = '50%'
+    secretDiv.style.left = '50%'
+    secretDiv.style.transform = 'translate(-50%, -50%)'
+    secretDiv.style.background = 'linear-gradient(135deg, #ff6b6b, #ffa502)'
+    secretDiv.style.color = 'white'
+    secretDiv.style.padding = '20px 40px'
+    secretDiv.style.borderRadius = '50px'
+    secretDiv.style.fontSize = '1.5rem'
+    secretDiv.style.fontWeight = 'bold'
+    secretDiv.style.zIndex = '3000'
+    secretDiv.style.boxShadow = '0 0 50px rgba(255,107,107,0.8)'
+    secretDiv.style.animation = 'pulse 0.5s infinite'
+    secretDiv.style.textAlign = 'center'
+    
+    document.body.appendChild(secretDiv)
+    
+    setTimeout(() => {
+        secretDiv.style.opacity = '0'
+        secretDiv.style.transition = 'opacity 0.5s'
+        setTimeout(() => secretDiv.remove(), 500)
+    }, 2000)
+}
+
+function checkSecretCode(event) {
+    const key = event.key.toUpperCase()
+    const expectedKey = targetCode[secretCode.length]
+    
+    if (key === expectedKey) {
+        secretCode += key
+        if (secretCode === targetCode) {
+            forceJackpot()
+            secretCode = ''
+        }
+    } else {
+        if (targetCode.startsWith(secretCode + key)) {
+            secretCode += key
+        } else {
+            secretCode = ''
+            if (key === targetCode[0]) {
+                secretCode = key
+            }
+        }
+    }
+}
+
 function triggerJackpot() {
     const jackpotModal = document.getElementById('jackpotModal')
     let countdown = 3
@@ -179,4 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
         spinBtn.addEventListener('click', spinSlots)
     }
     updatePointsDisplay()
+    
+    document.addEventListener('keydown', checkSecretCode)
 })
