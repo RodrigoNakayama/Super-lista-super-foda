@@ -10,7 +10,8 @@ const imageList = [
     'src/image/vegeta.jpg',
     'src/image/lowtiergod.jpg',
     'src/image/rato.jpg',
-    'src/image/balatrito.jpg'
+    'src/image/balatrito.jpg',
+    'src/image/meu pai e seu amigo.jpg'
 ]
 
 function initTheme() {
@@ -80,6 +81,10 @@ function showRandomImage() {
         setTimeout(() => {
             floatingImage.classList.add('show')
         }, 10)
+        
+        setTimeout(() => {
+            hideFloatingImage()
+        }, 4000)
     }
 }
 
@@ -108,121 +113,8 @@ function setupImageButton() {
     const floatingImage = document.getElementById('floatingImage')
     if (floatingImage) {
         floatingImage.addEventListener('click', function(e) {
-            if (e.target === floatingImage) {
+            if (e.target === floatingImage || e.target.classList.contains('close-image-btn')) {
                 hideFloatingImage()
-
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme')
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-        document.documentElement.setAttribute('data-theme', 'dark')
-        updateDarkModeButton('dark')
-    } else {
-        document.documentElement.setAttribute('data-theme', 'light')
-        updateDarkModeButton('light')
-    }
-}
-
-function updateDarkModeButton(theme) {
-    const darkModeBtn = document.getElementById('darkModeBtn')
-    if (darkModeBtn) {
-        darkModeBtn.textContent = theme === 'dark' ? '☀️' : '🌙'
-    }
-}
-
-function toggleDarkMode() {
-    const currentTheme = document.documentElement.getAttribute('data-theme')
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
-    
-    document.documentElement.setAttribute('data-theme', newTheme)
-    localStorage.setItem('theme', newTheme)
-    updateDarkModeButton(newTheme)
-}
-
-function getRandomImage() {
-    const randomIndex = Math.floor(Math.random() * imageList.length)
-    return imageList[randomIndex]
-}
-
-function getRandomPosition() {
-    const windowWidth = window.innerWidth
-    const windowHeight = window.innerHeight
-    const imageSize = 250
-    
-    const maxX = windowWidth - imageSize - 20
-    const maxY = windowHeight - imageSize - 20
-    
-    const randomX = Math.random() * maxX
-    const randomY = Math.random() * maxY
-    
-    return { x: Math.max(10, randomX), y: Math.max(10, randomY) }
-}
-
-function showRandomImage() {
-    const floatingImage = document.getElementById('floatingImage')
-    const randomImage = document.getElementById('randomImage')
-    
-    if (floatingImage && randomImage) {
-        const imageUrl = getRandomImage()
-        const position = getRandomPosition()
-        
-        randomImage.src = imageUrl
-        
-        floatingImage.style.left = position.x + 'px'
-        floatingImage.style.top = position.y + 'px'
-        floatingImage.style.transform = 'none'
-        
-        floatingImage.classList.remove('hidden')
-        
-        setTimeout(() => {
-            floatingImage.classList.add('show')
-        }, 10)
-    }
-}
-
-function hideFloatingImage() {
-    const floatingImage = document.getElementById('floatingImage')
-    if (floatingImage) {
-        floatingImage.classList.remove('show')
-        setTimeout(() => {
-            floatingImage.classList.add('hidden')
-        }, 500)
-    }
-}
-
-function setupImageButton() {
-    const imageBtn = document.getElementById('imageBtn')
-    const closeImageBtn = document.getElementById('closeImageBtn')
-    
-    if (imageBtn) {
-        imageBtn.addEventListener('click', showRandomImage)
-    }
-    
-    if (closeImageBtn) {
-        closeImageBtn.addEventListener('click', hideFloatingImage)
-    }
-    
-    const floatingImage = document.getElementById('floatingImage')
-    if (floatingImage) {
-        floatingImage.addEventListener('click', function(e) {
-            if (e.target === floatingImage) {
-                hideFloatingImage()
-            }
-        })
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    initTheme()
-    
-    const darkModeBtn = document.getElementById('darkModeBtn')
-    if (darkModeBtn) {
-        darkModeBtn.addEventListener('click', toggleDarkMode)
-    }
-    
-    setupImageButton()
-})
             }
         })
     }

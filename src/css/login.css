@@ -190,13 +190,13 @@ button {
     height: 250px;
     z-index: 1000;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.3s ease;
     pointer-events: none;
 }
 
 .floating-image.show {
-    opacity: 0.85;
-    pointer-events: auto;
+    opacity: 1;
+    pointer-events: none;
 }
 
 .floating-image img {
@@ -206,6 +206,7 @@ button {
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     border: 3px solid var(--cor-primaria-3);
+    pointer-events: none;
 }
 
 .close-image-btn {
@@ -225,6 +226,7 @@ button {
     justify-content: center;
     transition: all 0.3s ease;
     pointer-events: auto;
+    z-index: 1001;
 }
 
 .close-image-btn:hover {
