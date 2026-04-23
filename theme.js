@@ -62,61 +62,53 @@ function getRandomPosition() {
     return { x: Math.max(10, randomX), y: Math.max(10, randomY) }
 }
 
+let activeTimeout = null
+
 function showRandomImage() {
     const floatingImage = document.getElementById('floatingImage')
     const randomImage = document.getElementById('randomImage')
     
-    if (floatingImage && randomImage) {
-        const imageUrl = getRandomImage()
-        const position = getRandomPosition()
-        
-        randomImage.src = imageUrl
-        
-        floatingImage.style.left = position.x + 'px'
-        floatingImage.style.top = position.y + 'px'
-        floatingImage.style.transform = 'none'
-        
-        floatingImage.classList.remove('hidden')
-        
+    if (activeTimeout) {
+        clearTimeout(activeTimeout)
+        floatingImage.classList.remove('show')
         setTimeout(() => {
-            floatingImage.classList.add('show')
-        }, 10)
-        
-        setTimeout(() => {
-            hideFloatingImage()
-        }, 4000)
+            showImage(randomImage, floatingImage)
+        }, 50)
+    } else {
+        showImage(randomImage, floatingImage)
     }
 }
 
-function hideFloatingImage() {
-    const floatingImage = document.getElementById('floatingImage')
-    if (floatingImage) {
+function showImage(randomImage, floatingImage) {
+    const imageUrl = getRandomImage()
+    const position = getRandomPosition()
+    
+    randomImage.src = imageUrl
+    
+    floatingImage.style.left = position.x + 'px'
+    floatingImage.style.top = position.y + 'px'
+    floatingImage.style.transform = 'none'
+    
+    floatingImage.classList.remove('hidden')
+    
+    setTimeout(() => {
+        floatingImage.classList.add('show')
+    }, 10)
+    
+    activeTimeout = setTimeout(() => {
         floatingImage.classList.remove('show')
         setTimeout(() => {
             floatingImage.classList.add('hidden')
-        }, 500)
-    }
+            activeTimeout = null
+        }, 300)
+    }, 800)
 }
 
 function setupImageButton() {
     const imageBtn = document.getElementById('imageBtn')
-    const closeImageBtn = document.getElementById('closeImageBtn')
     
     if (imageBtn) {
         imageBtn.addEventListener('click', showRandomImage)
-    }
-    
-    if (closeImageBtn) {
-        closeImageBtn.addEventListener('click', hideFloatingImage)
-    }
-    
-    const floatingImage = document.getElementById('floatingImage')
-    if (floatingImage) {
-        floatingImage.addEventListener('click', function(e) {
-            if (e.target === floatingImage || e.target.classList.contains('close-image-btn')) {
-                hideFloatingImage()
-            }
-        })
     }
 }
 
