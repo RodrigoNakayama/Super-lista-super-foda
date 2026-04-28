@@ -37,28 +37,7 @@ async function discoverColumns() {
   else if (cols.includes('check')) columnNames.completed = 'check'
   else if (cols.includes('status')) columnNames.completed = 'status'
   
-  if (!cols.includes('quantidade')) {
-    await addQuantidadeColumn()
-  }
-  
   console.log('Colunas detectadas:', columnNames)
-}
-
-async function addQuantidadeColumn() {
-  const { error } = await supabase
-    .rpc('add_quantidade_column')
-  
-  if (error) {
-    console.log('Tentando criar coluna quantidade via SQL manual')
-    const { error: sqlError } = await supabase
-      .from('lista_compras')
-      .update({ quantidade: 1 })
-      .eq('id', '00000000-0000-0000-0000-000000000000')
-    
-    if (sqlError && sqlError.message.includes('column "quantidade" does not exist')) {
-      console.log('Coluna quantidade não existe. Por favor, execute o SQL no Supabase.')
-    }
-  }
 }
 
 async function checkAuth() {
@@ -128,7 +107,11 @@ function renderList() {
     
     const span = document.createElement('span')
     span.className = 'item-name'
-    span.textContent = `${item[columnNames.nome]}`
+    if (quantidade > 1) {
+      span.textContent = `${item[columnNames.nome]} (${quantidade}x)`
+    } else {
+      span.textContent = item[columnNames.nome]
+    }
     if (item.completed) span.style.textDecoration = 'line-through'
     
     const quantidadeContainer = document.createElement('div')
@@ -139,7 +122,7 @@ function renderList() {
     diminuirBtn.className = 'qtd-btn'
     diminuirBtn.onclick = (e) => {
       e.stopPropagation()
-      alterarQuantidade(item.id, quantidade - 1, span)
+      alterarQuantidade(item.id, quantidade - 1, span, item[columnNames.nome])
     }
     
     const quantidadeSpan = document.createElement('span')
@@ -152,7 +135,7 @@ function renderList() {
     aumentarBtn.className = 'qtd-btn'
     aumentarBtn.onclick = (e) => {
       e.stopPropagation()
-      alterarQuantidade(item.id, quantidade + 1, span)
+      alterarQuantidade(item.id, quantidade + 1, span, item[columnNames.nome])
     }
     
     quantidadeContainer.appendChild(diminuirBtn)
@@ -172,8 +155,10 @@ function renderList() {
     li.appendChild(quantidadeContainer)
     li.appendChild(deleteBtn)
     
-    li.onclick = () => {
-      toggleItem(item.id, !item.completed, span)
+    li.onclick = (e) => {
+      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+        toggleItem(item.id, !item.completed, span)
+      }
     }
     
     lista.appendChild(li)
@@ -182,7 +167,7 @@ function renderList() {
   updateSelecionadosButtons()
 }
 
-async function alterarQuantidade(id, novaQuantidade, spanElement) {
+async function alterarQuantidade(id, novaQuantidade, spanElement, nomeItem) {
   if (novaQuantidade < 1) {
     if (confirm('Deseja remover este item?')) {
       const li = document.querySelector(`li[data-id="${id}"]`)
@@ -194,11 +179,8 @@ async function alterarQuantidade(id, novaQuantidade, spanElement) {
   }
   
   if (typeof window.removePoints !== 'undefined') {
-    const diff = Math.abs(novaQuantidade - (itemsCache.find(i => i.id === id)?.quantidade || 1))
-    const custo = diff * 2
-    
-    if (!window.removePoints(custo)) {
-      showPointsMessage(`Pontos insuficientes! Custaria ${custo} pontos para alterar quantidade!`, 'error')
+    if (!window.removePoints(2)) {
+      showPointsMessage(`Pontos insuficientes! Custaria 2 pontos para alterar quantidade!`, 'error')
       return
     }
   }
@@ -222,13 +204,11 @@ async function alterarQuantidade(id, novaQuantidade, spanElement) {
     quantidadeSpan.textContent = novaQuantidade
   }
   
-  const itemSpan = document.querySelector(`li[data-id="${id}"] .item-name`)
-  if (itemSpan) {
-    const itemNome = itemsCache.find(i => i.id === id)?.[columnNames.nome] || ''
+  if (spanElement) {
     if (novaQuantidade > 1) {
-      itemSpan.textContent = `${itemNome} (${novaQuantidade}x)`
+      spanElement.textContent = `${nomeItem} (${novaQuantidade}x)`
     } else {
-      itemSpan.textContent = itemNome
+      spanElement.textContent = nomeItem
     }
   }
   
@@ -236,6 +216,8 @@ async function alterarQuantidade(id, novaQuantidade, spanElement) {
   if (item) {
     item.quantidade = novaQuantidade
   }
+  
+  showPointsMessage(`Quantidade alterada! -2 pontos`, 'success')
 }
 
 function toggleSelectItem(id, isSelected) {
@@ -302,7 +284,9 @@ async function deletarSelecionados() {
     }
   }
   
-  for (const id of selectedItems) {
+  const idsToDelete = Array.from(selectedItems)
+  
+  for (const id of idsToDelete) {
     const { error } = await supabase
       .from('lista_compras')
       .delete()
@@ -317,7 +301,7 @@ async function deletarSelecionados() {
   }
   
   selectedItems.clear()
-  showPointsMessage(`${selectedItems.size} itens removidos! -${custoTotal} pontos`, 'success')
+  showPointsMessage(`${idsToDelete.length} itens removidos! -${custoTotal} pontos`, 'success')
   await loadItems()
 }
 
