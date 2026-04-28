@@ -25,6 +25,13 @@
             <div id="pointsMessage" class="points-message"></div>
         </div>
         
+        <div class="multi-select-buttons">
+            <button id="selecionarTodos" class="multi-btn">Selecionar Todos</button>
+            <button id="deletarSelecionados" class="multi-btn delete-btn">🗑️ Remover Selecionados</button>
+            <button id="aumentarSelecionados" class="multi-btn">➕ +1 em Selecionados</button>
+            <button id="diminuirSelecionados" class="multi-btn">➖ -1 em Selecionados</button>
+        </div>
+        
         <div class="slots-container">
             <h3 class="slots-title">🎰 GIRE PARA GANHAR PONTOS 🎰</h3>
             <div class="slots-machine">
@@ -39,6 +46,7 @@
         <div class="info-box">
             <p>💡 Adicionar item: <strong>-10 pontos</strong></p>
             <p>🗑️ Remover item: <strong>-5 pontos</strong></p>
+            <p>📦 Alterar quantidade: <strong>-2 pontos por item</strong></p>
             <p>🎰 Gire os slots para ganhar pontos!</p>
         </div>
         
@@ -55,7 +63,7 @@
     <div id="jackpotModal" class="jackpot-modal hidden">
         <div class="jackpot-content">
             <div class="jackpot-animation">💀 JACKPOT! 💀</div>
-            <p>YOU SHOULD KILL YOURSELF NOW<span id="countdown">3</span> segundos...</p>
+            <p>Você será desconectado em <span id="countdown">3</span> segundos...</p>
             <div class="jackpot-skull">☠️</div>
         </div>
     </div>

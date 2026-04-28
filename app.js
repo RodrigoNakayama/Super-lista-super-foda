@@ -2,12 +2,17 @@ import { supabase } from './supabaseClient.js'
 
 const lista = document.getElementById('lista')
 const itemInput = document.getElementById('item')
+const selecionarTodosBtn = document.getElementById('selecionarTodos')
+const deletarSelecionadosBtn = document.getElementById('deletarSelecionados')
+const aumentarSelecionadosBtn = document.getElementById('aumentarSelecionados')
+const diminuirSelecionadosBtn = document.getElementById('diminuirSelecionados')
 
 let currentUser = null
 let columnNames = { nome: 'nome', completed: 'completed' }
 let pollingInterval = null
 let realtimeChannel = null
 let itemsCache = []
+let selectedItems = new Set()
 
 async function discoverColumns() {
   const { data, error } = await supabase
@@ -32,7 +37,28 @@ async function discoverColumns() {
   else if (cols.includes('check')) columnNames.completed = 'check'
   else if (cols.includes('status')) columnNames.completed = 'status'
   
+  if (!cols.includes('quantidade')) {
+    await addQuantidadeColumn()
+  }
+  
   console.log('Colunas detectadas:', columnNames)
+}
+
+async function addQuantidadeColumn() {
+  const { error } = await supabase
+    .rpc('add_quantidade_column')
+  
+  if (error) {
+    console.log('Tentando criar coluna quantidade via SQL manual')
+    const { error: sqlError } = await supabase
+      .from('lista_compras')
+      .update({ quantidade: 1 })
+      .eq('id', '00000000-0000-0000-0000-000000000000')
+    
+    if (sqlError && sqlError.message.includes('column "quantidade" does not exist')) {
+      console.log('Coluna quantidade não existe. Por favor, execute o SQL no Supabase.')
+    }
+  }
 }
 
 async function checkAuth() {
@@ -74,7 +100,7 @@ function renderList() {
   
   if (itemsCache.length === 0) {
     const emptyLi = document.createElement('li')
-    emptyLi.textContent = '✨ Lista vazia. Adicione itens acima!'
+    emptyLi.innerHTML = '<span style="text-align:center; width:100%">✨ Lista vazia. Adicione itens acima!</span>'
     emptyLi.style.justifyContent = 'center'
     emptyLi.style.opacity = '0.7'
     emptyLi.style.fontStyle = 'italic'
@@ -84,82 +110,250 @@ function renderList() {
   }
   
   itemsCache.forEach(item => {
+    const quantidade = item.quantidade || 1
     const li = document.createElement('li')
     li.setAttribute('data-id', item.id)
+    if (selectedItems.has(item.id)) {
+      li.classList.add('selected')
+    }
+    
+    const checkbox = document.createElement('input')
+    checkbox.type = 'checkbox'
+    checkbox.className = 'item-checkbox'
+    checkbox.checked = selectedItems.has(item.id)
+    checkbox.onchange = (e) => {
+      e.stopPropagation()
+      toggleSelectItem(item.id, checkbox.checked)
+    }
     
     const span = document.createElement('span')
-    span.textContent = item[columnNames.nome]
-    const isCompleted = item[columnNames.completed]
-    if (isCompleted) span.style.textDecoration = 'line-through'
+    span.className = 'item-name'
+    span.textContent = `${item[columnNames.nome]}`
+    if (item.completed) span.style.textDecoration = 'line-through'
+    
+    const quantidadeContainer = document.createElement('div')
+    quantidadeContainer.className = 'quantidade-container'
+    
+    const diminuirBtn = document.createElement('button')
+    diminuirBtn.textContent = '-'
+    diminuirBtn.className = 'qtd-btn'
+    diminuirBtn.onclick = (e) => {
+      e.stopPropagation()
+      alterarQuantidade(item.id, quantidade - 1, span)
+    }
+    
+    const quantidadeSpan = document.createElement('span')
+    quantidadeSpan.className = 'quantidade-valor'
+    quantidadeSpan.textContent = quantidade
+    quantidadeSpan.setAttribute('data-id', item.id)
+    
+    const aumentarBtn = document.createElement('button')
+    aumentarBtn.textContent = '+'
+    aumentarBtn.className = 'qtd-btn'
+    aumentarBtn.onclick = (e) => {
+      e.stopPropagation()
+      alterarQuantidade(item.id, quantidade + 1, span)
+    }
+    
+    quantidadeContainer.appendChild(diminuirBtn)
+    quantidadeContainer.appendChild(quantidadeSpan)
+    quantidadeContainer.appendChild(aumentarBtn)
     
     const deleteBtn = document.createElement('button')
     deleteBtn.textContent = '🗑️'
+    deleteBtn.className = 'delete-btn'
     deleteBtn.onclick = (e) => {
       e.stopPropagation()
       deleteItem(item.id, li)
     }
     
+    li.appendChild(checkbox)
     li.appendChild(span)
+    li.appendChild(quantidadeContainer)
     li.appendChild(deleteBtn)
     
     li.onclick = () => {
-      toggleItem(item.id, !isCompleted, span)
+      toggleItem(item.id, !item.completed, span)
     }
     
     lista.appendChild(li)
   })
+  
+  updateSelecionadosButtons()
 }
 
-window.adicionarItem = async function () {
-  if (!itemInput) return
-  
-  const nome = itemInput.value.trim()
-  
-  if (!nome) {
-    showPointsMessage('Digite um item para adicionar!', 'error')
+async function alterarQuantidade(id, novaQuantidade, spanElement) {
+  if (novaQuantidade < 1) {
+    if (confirm('Deseja remover este item?')) {
+      const li = document.querySelector(`li[data-id="${id}"]`)
+      if (li) {
+        await deleteItem(id, li)
+      }
+    }
     return
   }
   
   if (typeof window.removePoints !== 'undefined') {
-    if (!window.removePoints(10)) {
-      showPointsMessage('Pontos insuficientes! Gire os slots para ganhar pontos!', 'error')
+    const diff = Math.abs(novaQuantidade - (itemsCache.find(i => i.id === id)?.quantidade || 1))
+    const custo = diff * 2
+    
+    if (!window.removePoints(custo)) {
+      showPointsMessage(`Pontos insuficientes! Custaria ${custo} pontos para alterar quantidade!`, 'error')
       return
     }
   }
   
-  const btn = document.querySelector('button[onclick="adicionarItem()"]')
-  if (btn) {
-    btn.disabled = true
-    btn.style.opacity = '0.7'
-  }
-  
-  const novoItem = {
-    [columnNames.nome]: nome,
-    [columnNames.completed]: false,
-    user_id: currentUser.id
-  }
-  
   const { error } = await supabase
     .from('lista_compras')
-    .insert([novoItem])
-  
-  if (btn) {
-    btn.disabled = false
-    btn.style.opacity = '1'
-  }
+    .update({ quantidade: novaQuantidade })
+    .eq('id', id)
   
   if (error) {
-    console.error('Erro ao adicionar:', error)
-    showPointsMessage('Erro ao adicionar item!', 'error')
+    console.error('Erro ao alterar quantidade:', error)
+    showPointsMessage('Erro ao alterar quantidade!', 'error')
     if (typeof window.addPoints !== 'undefined') {
-      window.addPoints(10)
+      window.addPoints(2)
     }
     return
   }
   
-  itemInput.value = ''
-  itemInput.focus()
-  showPointsMessage('Item adicionado! -10 pontos', 'success')
+  const quantidadeSpan = document.querySelector(`.quantidade-valor[data-id="${id}"]`)
+  if (quantidadeSpan) {
+    quantidadeSpan.textContent = novaQuantidade
+  }
+  
+  const itemSpan = document.querySelector(`li[data-id="${id}"] .item-name`)
+  if (itemSpan) {
+    const itemNome = itemsCache.find(i => i.id === id)?.[columnNames.nome] || ''
+    if (novaQuantidade > 1) {
+      itemSpan.textContent = `${itemNome} (${novaQuantidade}x)`
+    } else {
+      itemSpan.textContent = itemNome
+    }
+  }
+  
+  const item = itemsCache.find(i => i.id === id)
+  if (item) {
+    item.quantidade = novaQuantidade
+  }
+}
+
+function toggleSelectItem(id, isSelected) {
+  if (isSelected) {
+    selectedItems.add(id)
+  } else {
+    selectedItems.delete(id)
+  }
+  
+  const li = document.querySelector(`li[data-id="${id}"]`)
+  if (li) {
+    if (isSelected) {
+      li.classList.add('selected')
+    } else {
+      li.classList.remove('selected')
+    }
+  }
+  
+  updateSelecionadosButtons()
+}
+
+function selecionarTodos() {
+  if (selectedItems.size === itemsCache.length && itemsCache.length > 0) {
+    selectedItems.clear()
+  } else {
+    itemsCache.forEach(item => {
+      selectedItems.add(item.id)
+    })
+  }
+  
+  renderList()
+}
+
+function updateSelecionadosButtons() {
+  const count = selectedItems.size
+  const selecionarTodosBtn = document.getElementById('selecionarTodos')
+  const deletarSelecionadosBtn = document.getElementById('deletarSelecionados')
+  const aumentarSelecionadosBtn = document.getElementById('aumentarSelecionados')
+  const diminuirSelecionadosBtn = document.getElementById('diminuirSelecionados')
+  
+  if (selecionarTodosBtn) {
+    if (selectedItems.size === itemsCache.length && itemsCache.length > 0) {
+      selecionarTodosBtn.textContent = 'Desselecionar Todos'
+    } else {
+      selecionarTodosBtn.textContent = 'Selecionar Todos'
+    }
+  }
+  
+  const hasSelection = count > 0
+  if (deletarSelecionadosBtn) deletarSelecionadosBtn.disabled = !hasSelection
+  if (aumentarSelecionadosBtn) aumentarSelecionadosBtn.disabled = !hasSelection
+  if (diminuirSelecionadosBtn) diminuirSelecionadosBtn.disabled = !hasSelection
+}
+
+async function deletarSelecionados() {
+  if (selectedItems.size === 0) return
+  
+  const custoTotal = selectedItems.size * 5
+  
+  if (typeof window.removePoints !== 'undefined') {
+    if (!window.removePoints(custoTotal)) {
+      showPointsMessage(`Pontos insuficientes! Custaria ${custoTotal} pontos para remover ${selectedItems.size} itens!`, 'error')
+      return
+    }
+  }
+  
+  for (const id of selectedItems) {
+    const { error } = await supabase
+      .from('lista_compras')
+      .delete()
+      .eq('id', id)
+    
+    if (error) {
+      console.error('Erro ao deletar item:', error)
+      if (typeof window.addPoints !== 'undefined') {
+        window.addPoints(5)
+      }
+    }
+  }
+  
+  selectedItems.clear()
+  showPointsMessage(`${selectedItems.size} itens removidos! -${custoTotal} pontos`, 'success')
+  await loadItems()
+}
+
+async function alterarQuantidadeSelecionados(incremento) {
+  if (selectedItems.size === 0) return
+  
+  const itemsToUpdate = itemsCache.filter(item => selectedItems.has(item.id))
+  const custoTotal = itemsToUpdate.length * 2
+  
+  if (typeof window.removePoints !== 'undefined') {
+    if (!window.removePoints(custoTotal)) {
+      showPointsMessage(`Pontos insuficientes! Custaria ${custoTotal} pontos para alterar ${itemsToUpdate.length} itens!`, 'error')
+      return
+    }
+  }
+  
+  for (const item of itemsToUpdate) {
+    const quantidadeAtual = item.quantidade || 1
+    const novaQuantidade = Math.max(1, quantidadeAtual + incremento)
+    
+    if (novaQuantidade !== quantidadeAtual) {
+      const { error } = await supabase
+        .from('lista_compras')
+        .update({ quantidade: novaQuantidade })
+        .eq('id', item.id)
+      
+      if (error) {
+        console.error('Erro ao alterar quantidade:', error)
+      } else {
+        item.quantidade = novaQuantidade
+      }
+    }
+  }
+  
+  showPointsMessage(`${itemsToUpdate.length} itens alterados! -${custoTotal} pontos`, 'success')
+  renderList()
 }
 
 async function toggleItem(id, completed, spanElement) {
@@ -194,6 +388,8 @@ async function deleteItem(id, liElement) {
     }
   }
   
+  selectedItems.delete(id)
+  
   liElement.classList.add('removing')
   liElement.style.animation = 'slideOut 0.25s ease-in forwards'
   
@@ -215,6 +411,59 @@ async function deleteItem(id, liElement) {
       showPointsMessage('Item removido! -5 pontos', 'success')
     }
   }, 200)
+}
+
+window.adicionarItem = async function () {
+  if (!itemInput) return
+  
+  const nome = itemInput.value.trim()
+  
+  if (!nome) {
+    showPointsMessage('Digite um item para adicionar!', 'error')
+    return
+  }
+  
+  if (typeof window.removePoints !== 'undefined') {
+    if (!window.removePoints(10)) {
+      showPointsMessage('Pontos insuficientes! Gire os slots para ganhar pontos!', 'error')
+      return
+    }
+  }
+  
+  const btn = document.querySelector('button[onclick="adicionarItem()"]')
+  if (btn) {
+    btn.disabled = true
+    btn.style.opacity = '0.7'
+  }
+  
+  const novoItem = {
+    [columnNames.nome]: nome,
+    [columnNames.completed]: false,
+    quantidade: 1,
+    user_id: currentUser.id
+  }
+  
+  const { error } = await supabase
+    .from('lista_compras')
+    .insert([novoItem])
+  
+  if (btn) {
+    btn.disabled = false
+    btn.style.opacity = '1'
+  }
+  
+  if (error) {
+    console.error('Erro ao adicionar:', error)
+    showPointsMessage('Erro ao adicionar item!', 'error')
+    if (typeof window.addPoints !== 'undefined') {
+      window.addPoints(10)
+    }
+    return
+  }
+  
+  itemInput.value = ''
+  itemInput.focus()
+  showPointsMessage('Item adicionado! -10 pontos', 'success')
 }
 
 function setupRealtime() {
@@ -293,6 +542,11 @@ window.logout = async function () {
   await supabase.auth.signOut()
   window.location.href = 'login.html'
 }
+
+if (selecionarTodosBtn) selecionarTodosBtn.addEventListener('click', selecionarTodos)
+if (deletarSelecionadosBtn) deletarSelecionadosBtn.addEventListener('click', deletarSelecionados)
+if (aumentarSelecionadosBtn) aumentarSelecionadosBtn.addEventListener('click', () => alterarQuantidadeSelecionados(1))
+if (diminuirSelecionadosBtn) diminuirSelecionadosBtn.addEventListener('click', () => alterarQuantidadeSelecionados(-1))
 
 const style = document.createElement('style')
 style.textContent = `
