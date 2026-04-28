@@ -16,8 +16,12 @@ const pointValues = {
 }
 
 const confettiImages = [
-    'src/image/yuri.jpg',
-    'src/image/yuriv2.jpg'
+    'https://cdn-icons-png.flaticon.com/512/1828/1828884.png',
+    'https://cdn-icons-png.flaticon.com/512/1828/1828891.png',
+    'https://cdn-icons-png.flaticon.com/512/1828/1828901.png',
+    'https://cdn-icons-png.flaticon.com/512/1828/1828914.png',
+    'https://cdn-icons-png.flaticon.com/512/1828/1828926.png',
+    'https://cdn-icons-png.flaticon.com/512/1828/1828935.png'
 ]
 
 function getRandomSymbol() {
@@ -35,12 +39,19 @@ function addPoints(amount) {
     userPoints += amount
     updatePointsDisplay()
     showPointsMessage(`+${amount} pontos!`, 'gain')
+    return true
 }
 
 function removePoints(amount) {
-    userPoints -= amount
-    updatePointsDisplay()
-    showPointsMessage(`-${amount} ponto${amount > 1 ? 's' : ''}!`, 'lose')
+    if (userPoints >= amount) {
+        userPoints -= amount
+        updatePointsDisplay()
+        showPointsMessage(`-${amount} ponto${amount > 1 ? 's' : ''}!`, 'lose')
+        return true
+    } else {
+        showPointsMessage(`Pontos insuficientes! Você tem ${userPoints} pontos, precisa de ${amount} pontos!`, 'error')
+        return false
+    }
 }
 
 function showPointsMessage(message, type) {
@@ -53,7 +64,7 @@ function showPointsMessage(message, type) {
                 pointsMessage.textContent = ''
                 pointsMessage.className = 'points-message'
             }
-        }, 2000)
+        }, 3000)
     }
 }
 
@@ -117,16 +128,12 @@ function launchConfetti(points) {
             requestAnimationFrame(animateConfetto)
         }, i * 20)
     }
-    
-    console.log(`Canhão de confete: ${totalConfetti} confetes para ${points} pontos!`)
 }
 
 function checkWinPoints(result1, result2, result3) {
-    const combination = `${result1}${result2}${result3}`
-    const specialCombination = `${result1}${result2}${result3}`
-    
     if (result1 === result2 && result2 === result3) {
-        const points = pointValues[specialCombination] || 5
+        const combination = `${result1}${result2}${result3}`
+        const points = pointValues[combination] || 5
         addPoints(points)
         
         if (result1 === '7️⃣' && result2 === '7️⃣' && result3 === '7️⃣') {

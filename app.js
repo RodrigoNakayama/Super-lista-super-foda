@@ -178,9 +178,17 @@ async function alterarQuantidade(id, novaQuantidade, spanElement, nomeItem) {
     return
   }
   
+  const userPoints = typeof window.getUserPoints === 'function' ? window.getUserPoints() : 100
+  
+  if (userPoints < 2) {
+    showPointsMessage(`Pontos insuficientes! Você tem ${userPoints} pontos, precisa de 2 pontos para alterar quantidade!`, 'error')
+    return
+  }
+  
   if (typeof window.removePoints !== 'undefined') {
-    if (!window.removePoints(2)) {
-      showPointsMessage(`Pontos insuficientes! Custaria 2 pontos para alterar quantidade!`, 'error')
+    const success = window.removePoints(2)
+    if (!success) {
+      showPointsMessage(`Pontos insuficientes! Você tem ${window.getUserPoints()} pontos, precisa de 2 pontos!`, 'error')
       return
     }
   }
@@ -276,10 +284,17 @@ async function deletarSelecionados() {
   if (selectedItems.size === 0) return
   
   const custoTotal = selectedItems.size * 5
+  const userPoints = typeof window.getUserPoints === 'function' ? window.getUserPoints() : 100
+  
+  if (userPoints < custoTotal) {
+    showPointsMessage(`Pontos insuficientes! Você tem ${userPoints} pontos, precisa de ${custoTotal} pontos para remover ${selectedItems.size} itens!`, 'error')
+    return
+  }
   
   if (typeof window.removePoints !== 'undefined') {
-    if (!window.removePoints(custoTotal)) {
-      showPointsMessage(`Pontos insuficientes! Custaria ${custoTotal} pontos para remover ${selectedItems.size} itens!`, 'error')
+    const success = window.removePoints(custoTotal)
+    if (!success) {
+      showPointsMessage(`Pontos insuficientes! Você tem ${window.getUserPoints()} pontos, precisa de ${custoTotal} pontos!`, 'error')
       return
     }
   }
@@ -310,10 +325,17 @@ async function alterarQuantidadeSelecionados(incremento) {
   
   const itemsToUpdate = itemsCache.filter(item => selectedItems.has(item.id))
   const custoTotal = itemsToUpdate.length * 2
+  const userPoints = typeof window.getUserPoints === 'function' ? window.getUserPoints() : 100
+  
+  if (userPoints < custoTotal) {
+    showPointsMessage(`Pontos insuficientes! Você tem ${userPoints} pontos, precisa de ${custoTotal} pontos para alterar ${itemsToUpdate.length} itens!`, 'error')
+    return
+  }
   
   if (typeof window.removePoints !== 'undefined') {
-    if (!window.removePoints(custoTotal)) {
-      showPointsMessage(`Pontos insuficientes! Custaria ${custoTotal} pontos para alterar ${itemsToUpdate.length} itens!`, 'error')
+    const success = window.removePoints(custoTotal)
+    if (!success) {
+      showPointsMessage(`Pontos insuficientes! Você tem ${window.getUserPoints()} pontos, precisa de ${custoTotal} pontos!`, 'error')
       return
     }
   }
@@ -365,9 +387,17 @@ async function toggleItem(id, completed, spanElement) {
 async function deleteItem(id, liElement) {
   if (liElement.classList.contains('removing')) return
   
+  const userPoints = typeof window.getUserPoints === 'function' ? window.getUserPoints() : 100
+  
+  if (userPoints < 5) {
+    showPointsMessage(`Pontos insuficientes! Você tem ${userPoints} pontos, precisa de 5 pontos para remover!`, 'error')
+    return
+  }
+  
   if (typeof window.removePoints !== 'undefined') {
-    if (!window.removePoints(5)) {
-      showPointsMessage('Pontos insuficientes para remover! Gire os slots!', 'error')
+    const success = window.removePoints(5)
+    if (!success) {
+      showPointsMessage(`Pontos insuficientes! Você tem ${window.getUserPoints()} pontos, precisa de 5 pontos!`, 'error')
       return
     }
   }
@@ -407,9 +437,18 @@ window.adicionarItem = async function () {
     return
   }
   
+  const userPoints = typeof window.getUserPoints === 'function' ? window.getUserPoints() : 100
+  
+  if (userPoints < 10) {
+    showPointsMessage(`Pontos insuficientes! Você tem ${userPoints} pontos, precisa de 10 pontos para adicionar! Gire os slots para ganhar pontos!`, 'error')
+    return
+  }
+  
   if (typeof window.removePoints !== 'undefined') {
-    if (!window.removePoints(10)) {
-      showPointsMessage('Pontos insuficientes! Gire os slots para ganhar pontos!', 'error')
+    const success = window.removePoints(10)
+    if (!success) {
+      const currentPoints = typeof window.getUserPoints === 'function' ? window.getUserPoints() : 100
+      showPointsMessage(`Pontos insuficientes! Você tem ${currentPoints} pontos, precisa de 10 pontos!`, 'error')
       return
     }
   }
@@ -448,6 +487,7 @@ window.adicionarItem = async function () {
   itemInput.value = ''
   itemInput.focus()
   showPointsMessage('Item adicionado! -10 pontos', 'success')
+  await loadItems()
 }
 
 function setupRealtime() {
@@ -510,9 +550,7 @@ function showPointsMessage(message, type) {
         pointsMessage.textContent = ''
         pointsMessage.className = 'points-message'
       }
-    }, 2000)
-  } else {
-    alert(message)
+    }, 3000)
   }
 }
 
