@@ -16,7 +16,9 @@ const imageList = [
     'src/image/sas.jpg',
     'src/image/balls.jpg',
     'src/image/bobs.jpg',
-    'src/image/cokc.jpg'
+    'src/image/cokc.jpg',
+    'src/image/homijpg',
+    'src/image/hulc.jpg'
 ]
 
 function initTheme() {
