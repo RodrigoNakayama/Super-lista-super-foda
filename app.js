@@ -112,7 +112,6 @@ function renderList() {
     } else {
       span.textContent = item[columnNames.nome]
     }
-    if (item.completed) span.style.textDecoration = 'line-through'
     
     const quantidadeContainer = document.createElement('div')
     quantidadeContainer.className = 'quantidade-container'
@@ -154,12 +153,6 @@ function renderList() {
     li.appendChild(span)
     li.appendChild(quantidadeContainer)
     li.appendChild(deleteBtn)
-    
-    li.onclick = (e) => {
-      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
-        toggleItem(item.id, !item.completed, span)
-      }
-    }
     
     lista.appendChild(li)
   })
@@ -360,28 +353,6 @@ async function alterarQuantidadeSelecionados(incremento) {
   
   showPointsMessage(`${itemsToUpdate.length} itens alterados! -${custoTotal} pontos`, 'success')
   renderList()
-}
-
-async function toggleItem(id, completed, spanElement) {
-  const updateData = { [columnNames.completed]: completed }
-  
-  const { error } = await supabase
-    .from('lista_compras')
-    .update(updateData)
-    .eq('id', id)
-  
-  if (error) {
-    console.error('Erro ao atualizar:', error)
-    return
-  }
-  
-  if (spanElement) {
-    if (completed) {
-      spanElement.style.textDecoration = 'line-through'
-    } else {
-      spanElement.style.textDecoration = 'none'
-    }
-  }
 }
 
 async function deleteItem(id, liElement) {
